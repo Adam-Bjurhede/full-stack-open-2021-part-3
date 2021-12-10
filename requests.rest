@@ -1,16 +1,22 @@
-
-GET http://localhost:3001/api/persons
+//GET ALL
+GET http://localhost:3001/api/persons/
 ###
+//GET ONE
+GET http://localhost:3001/api/persons/
+###
+//ADD NEW
 POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name": "Lintr33n",
-    "number": "545454546"
+    "name": 242425323242,
+	"number": 2434
+    
 }
 
 ###
-DELETE http://localhost:3001/api/persons/2
+//DELETE ONE
+DELETE http://localhost:3001/api/persons/61b34d42c0ad032323bb8ea5
 
 
 ###
@@ -21,7 +27,7 @@ POST https://powerful-hollows-19562.herokuapp.com/api/persons
 content-type: application/json
 
 {
-    "name": "Lintr33n",
+    "name": "Li43ntr33n",
     "number": "545454546"
 }
 

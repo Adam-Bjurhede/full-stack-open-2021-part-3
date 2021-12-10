@@ -1,95 +1,98 @@
+//NPM
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('build'));
+//Models
+const Person = require('./models/person');
+//helpers
+const errorHandler = require('./middleware/errorHandler');
 
+const app = express();
+
+//Middleware
+app.use(express.static('build'));
+app.use(express.json());
+app.use(cors());
 morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-let phonebook = [
-	{
-		id: 1,
-		name: 'Arto Hellas',
-		number: '040-123456',
-	},
-	{
-		id: 2,
-		name: 'Ada Lovelace',
-		number: '39-44-5323523',
-	},
-	{
-		id: 3,
-		name: 'Dan Abramov',
-		number: '12-43-234345',
-	},
-	{
-		id: 4,
-		name: 'Mary Poppendieck',
-		number: '39-23-6423122',
-	},
-];
-
 //Get all persons
 app.get('/api/persons', (request, response) => {
-	response.json(phonebook);
+	Person.find({})
+		.then((persons) => {
+			response.json(persons);
+		})
+		.catch((error) => console.log(error));
 });
 
 //Get one person
-app.get('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id);
+app.get('/api/persons/:id', (request, response, next) => {
+	const id = request.params.id;
 
-	const person = phonebook.find((person) => person.id === id);
-
-	if (!person) {
-		return response.status(404).json({ success: false, message: 'No person was found' });
-	}
-
-	response.status(200).json(person);
+	Person.findById(id)
+		.then((person) => {
+			if (person) {
+				response.status(200).json(person);
+			} else {
+				response.status(404).end();
+			}
+		})
+		.catch((error) => next(error));
 });
 
 //Delete person
-app.delete('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id);
+app.delete('/api/persons/:id', (request, response, next) => {
+	const id = request.params.id;
 
-	phonebook = phonebook.filter((person) => person.id !== id);
-
-	response.status(204).end();
+	Person.findByIdAndRemove(id)
+		.then((result) => {
+			response.status(204).end();
+		})
+		.catch((error) => next(error));
 });
 
-//Add new entrie
-app.post('/api/persons', (request, response) => {
+//Add new person
+app.post('/api/persons', (request, response, next) => {
 	const newPerson = request.body;
 
-	if (!newPerson.name || !newPerson.number) {
-		return response.status(400).json({ error: 'Both name and number has to be present' });
-	}
+	const person = new Person(newPerson);
 
-	const personExist = phonebook.find((person) => person.name.toLowerCase() === newPerson.name.toLowerCase());
+	person
+		.save()
+		.then((savedPerson) => {
+			console.log(savedPerson);
+			response.json(savedPerson);
+		})
+		.catch((error) => next(error));
+});
 
-	if (personExist) {
-		return response.status(400).json({ error: 'Name must be unique' });
-	}
+//Update person
+app.put('/api/persons/:id', (request, response, next) => {
+	const id = request.params.id;
+	const newPerson = request.body;
 
-	newPerson.id = Math.round(Math.random() * 10000);
-
-	phonebook = phonebook.concat(newPerson);
-
-	response.status(200).json(newPerson);
+	Person.findByIdAndUpdate(id, newPerson, { new: true, runValidators: true })
+		.then((updatedPerson) => {
+			response.json(updatedPerson);
+		})
+		.catch((error) => next(error));
 });
 
 //Get Info
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
 	const date = new Date();
 
-	response.send(`<p>Phonebook has info for ${phonebook.length} people</p>
-	<p>${date}</p>
-	
-	`);
+	Person.count({})
+		.then((count) => {
+			response.send(`<p>Phonebook has info for ${count} people</p>
+		<p>${date}</p>`);
+		})
+		.catch((error) => next(error));
 });
+
+app.use(errorHandler);
 
 //Port
 const PORT = process.env.PORT || 3001;
