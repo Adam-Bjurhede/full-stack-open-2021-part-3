@@ -19,7 +19,12 @@
 	},
 	"homepage": "https://github.com/Adam-Bjurhede/full-stack-open-2021-part-3#readme",
 	"dependencies": {
+<<<<<<< HEAD
 		"cors": "^2.8.5",
 		"express": "^4.17.1"
+=======
+		"express": "^4.17.1",
+		"morgan": "^1.10.0"
+>>>>>>> c42d4c96f1425b26b67ec7b05389477d95d3579c
 	}
 }

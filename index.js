@@ -1,10 +1,17 @@
 const express = require('express');
+<<<<<<< HEAD
 const cors = require('cors');
+=======
+const morgan = require('morgan');
+>>>>>>> c42d4c96f1425b26b67ec7b05389477d95d3579c
 
 const app = express();
 app.use(cors());
 
 app.use(express.json());
+
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let phonebook = [
 	{
