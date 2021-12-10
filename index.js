@@ -1,9 +1,6 @@
 const express = require('express');
-<<<<<<< HEAD
 const cors = require('cors');
-=======
 const morgan = require('morgan');
->>>>>>> c42d4c96f1425b26b67ec7b05389477d95d3579c
 
 const app = express();
 app.use(cors());
