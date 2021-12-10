@@ -11,3 +11,19 @@ content-type: application/json
 
 ###
 DELETE http://localhost:3001/api/persons/2
+
+
+###
+
+GET https://powerful-hollows-19562.herokuapp.com/api/persons
+###
+POST https://powerful-hollows-19562.herokuapp.com/api/persons
+content-type: application/json
+
+{
+    "name": "Lintr33n",
+    "number": "545454546"
+}
+
+###
+DELETE https://powerful-hollows-19562.herokuapp.com/api/persons/2
