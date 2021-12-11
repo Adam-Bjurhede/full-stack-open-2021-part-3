@@ -8,7 +8,6 @@ const morgan = require('morgan');
 const Person = require('./models/person');
 //helpers
 const errorHandler = require('./middleware/errorHandler');
-const res = require('express/lib/response');
 
 const app = express();
 
@@ -16,7 +15,7 @@ const app = express();
 app.use(express.static('build'));
 app.use(express.json());
 app.use(cors());
-morgan.token('body', (req, res) => JSON.stringify(req.body));
+morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 //Get all persons
@@ -48,7 +47,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 	const id = request.params.id;
 
 	Person.findByIdAndRemove(id)
-		.then((result) => {
+		.then(() => {
 			response.status(204).end();
 		})
 		.catch((error) => next(error));
