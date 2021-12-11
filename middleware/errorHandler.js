@@ -1,5 +1,5 @@
 const errorHandler = (error, request, response, next) => {
-	console.log(error.message);
+	console.log('💥💥💥', error);
 
 	if (error.name === 'CastError') {
 		return response.status(400).json({ error: 'malformatted id' });

@@ -8,6 +8,7 @@ const morgan = require('morgan');
 const Person = require('./models/person');
 //helpers
 const errorHandler = require('./middleware/errorHandler');
+const res = require('express/lib/response');
 
 const app = express();
 
@@ -75,6 +76,10 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 	Person.findByIdAndUpdate(id, newPerson, { new: true, runValidators: true })
 		.then((updatedPerson) => {
+			if (updatedPerson === null) {
+				return response.status(404).json({ error: 'Person does not exist' });
+			}
+
 			response.json(updatedPerson);
 		})
 		.catch((error) => next(error));
